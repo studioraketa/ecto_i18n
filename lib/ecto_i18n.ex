@@ -1,5 +1,5 @@
 defmodule EctoI18n do
-  alias __MODULE__.{TranslationReader, TranslationWriter}
+  alias __MODULE__.{Reader, Writer}
 
   import __MODULE__.Schema
 
@@ -26,9 +26,9 @@ defmodule EctoI18n do
     end
   end
 
-  def translate(term, locale, opts) when is_list(term), do: TranslationReader.bulk(term, locale, opts)
-  def translate(term, locale, opts), do: TranslationReader.single(term, locale, opts)
+  def translate(term, locale, opts) when is_list(term), do: Reader.bulk(term, locale, opts)
+  def translate(term, locale, opts), do: Reader.single(term, locale, opts)
 
-  def create(struct, attrs, locale), do: TranslationWriter.create(struct, attrs, locale)
-  def update(record, attrs, locale, opts \\ []), do: TranslationWriter.update(record, attrs, locale, opts)
+  def create(struct, attrs, locale), do: Writer.create(struct, attrs, locale)
+  def update(record, attrs, locale, opts \\ []), do: Writer.update(record, attrs, locale, opts)
 end

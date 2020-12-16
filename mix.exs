@@ -4,7 +4,7 @@ defmodule EctoI18n.MixProject do
   def project do
     [
       app: :ecto_i18n,
-      version: "0.0.1",
+      version: "0.0.2",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

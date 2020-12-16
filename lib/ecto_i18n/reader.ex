@@ -1,4 +1,4 @@
-defmodule EctoI18n.TranslationReader do
+defmodule EctoI18n.Reader do
   @repo Application.get_env(:ecto_i18n, :repo)
   @default_locale Application.get_env(:ecto_i18n, :default_locale)
 
