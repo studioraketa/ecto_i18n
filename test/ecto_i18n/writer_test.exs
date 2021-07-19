@@ -145,6 +145,7 @@ defmodule EctoI18n.WriterTest do
       assert updated_user.bio == params.bio
 
       refute Repo.get_by(User.Translation, user_id: updated_user.id, locale: @default_locale)
+      refute Repo.get_by(User.Translation, user_id: updated_user.id, locale: "ru")
     end
 
     test "returns a changeset with errors for default locale and invalid params" do
