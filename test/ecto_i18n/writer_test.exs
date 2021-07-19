@@ -34,6 +34,21 @@ defmodule EctoI18n.WriterTest do
       refute Repo.get_by(User.Translation, user_id: user.id, locale: @default_locale)
     end
 
+    test "creates a record and no translation for overriden default locale and valid params" do
+      params = %{
+        name: "John Doe",
+        email: "john@example.com",
+        bio: "I do not remember..."
+      }
+
+      assert {:ok, %User{} = user} = Writer.create(%User{}, params, "ru", default: "ru")
+      assert user.name == params.name
+      assert user.email == params.email
+      assert user.bio == params.bio
+
+      refute Repo.get_by(User.Translation, user_id: user.id, locale: "ru")
+    end
+
     test "returns a changeset with errors for default locale and invalid params" do
       params = %{
         name: "",
@@ -42,6 +57,18 @@ defmodule EctoI18n.WriterTest do
       }
 
       assert {:error, changeset} = Writer.create(%User{}, params, @default_locale)
+      assert "can't be blank" in errors_on(changeset).name
+      assert "can't be blank" in errors_on(changeset).email
+    end
+
+    test "returns a changeset with errors for overriden default locale and invalid params" do
+      params = %{
+        name: "",
+        email: "",
+        bio: ""
+      }
+
+      assert {:error, changeset} = Writer.create(%User{}, params, "ru", default: "ru")
       assert "can't be blank" in errors_on(changeset).name
       assert "can't be blank" in errors_on(changeset).email
     end
@@ -75,7 +102,6 @@ defmodule EctoI18n.WriterTest do
       assert "can't be blank" in errors_on(changeset).email
     end
 
-
     test "returns changeset with errors for non default locale and invalid params for translation" do
       params = %{
         name: "John Doe",
@@ -105,6 +131,22 @@ defmodule EctoI18n.WriterTest do
       refute Repo.get_by(User.Translation, user_id: updated_user.id, locale: @default_locale)
     end
 
+    test "updates record for overriden default locale and valid params" do
+      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      params = %{
+        name: "Jack Bouer",
+        email: "jack.b@bleble.com",
+        bio: "24"
+      }
+
+      assert {:ok, %User{} = updated_user} = Writer.update(user, params, "ru", default: "ru")
+      assert updated_user.name == params.name
+      assert updated_user.email == params.email
+      assert updated_user.bio == params.bio
+
+      refute Repo.get_by(User.Translation, user_id: updated_user.id, locale: @default_locale)
+    end
+
     test "returns a changeset with errors for default locale and invalid params" do
       user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
       params = %{
@@ -114,6 +156,19 @@ defmodule EctoI18n.WriterTest do
       }
 
       assert {:error, changeset} = Writer.update(user, params, @default_locale)
+      assert "can't be blank" in errors_on(changeset).name
+      assert "can't be blank" in errors_on(changeset).email
+    end
+
+    test "returns a changeset with errors for overriden default locale and invalid params" do
+      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      params = %{
+        name: "",
+        email: "",
+        bio: ""
+      }
+
+      assert {:error, changeset} = Writer.update(user, params, "ru", default: "ru")
       assert "can't be blank" in errors_on(changeset).name
       assert "can't be blank" in errors_on(changeset).email
     end
@@ -224,6 +279,30 @@ defmodule EctoI18n.WriterTest do
       assert db_user.bio == user.bio
 
       translation = Repo.get_by!(User.Translation, user_id: user.id, locale: "es")
+      assert translation.name == params.name
+      assert translation.bio == params.bio
+    end
+
+    test "updates a record and translation for overriden non default locale, valid params and non existing translation" do
+      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      params = %{
+        name: "John Smith ES",
+        email: "j.smith@example.com",
+        bio: "Some stuff in ES"
+      }
+
+      assert {:ok, %User{} = updated_user} = Writer.update(user, params, @default_locale, default: "ru")
+      assert updated_user.email == params.email
+      assert updated_user.name == params.name
+      assert updated_user.bio == params.bio
+
+      db_user = Repo.get_by!(User, id: user.id)
+      assert db_user.email == params.email
+      assert db_user.name == user.name
+      assert db_user.bio == user.bio
+
+      translation = Repo.get_by!(User.Translation, user_id: user.id, locale: @default_locale)
       assert translation.name == params.name
       assert translation.bio == params.bio
     end

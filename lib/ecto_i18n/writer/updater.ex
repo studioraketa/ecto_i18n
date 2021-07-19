@@ -6,15 +6,25 @@ defmodule EctoI18n.Writer.Updater do
   @repo Application.get_env(:ecto_i18n, :repo)
   @default_locale Application.get_env(:ecto_i18n, :default_locale)
 
-  def run(record, attrs, locale, opts \\ []), do: update(record, attrs, locale, opts)
+  def run(record, attrs, locale, opts) do
+    # The passed in default locale overrides the config default locale!
+    default_locale = Keyword.get(opts, :default, @default_locale)
 
-  defp update(record, attrs, @default_locale, _opts) do
+    case locale == default_locale do
+      true ->
+        update(record, attrs)
+      false ->
+        update_with_translation(record, attrs, locale, default_locale)
+    end
+  end
+
+  defp update(record, attrs) do
     record
     |> Data.translated_schema(record).changeset(attrs)
     |> @repo.update()
   end
 
-  defp update(record, attrs, locale, opts) do
+  defp update_with_translation(record, attrs, locale, default_locale) do
     translation = find_translation(record, locale)
     record_params = attrs |> atomize_keys() |> extract_record_params(record)
 
@@ -29,7 +39,7 @@ defmodule EctoI18n.Writer.Updater do
         nil ->
           translation_params = attrs |> atomize_keys() |> extract_translation_create_params(
             record,
-            Keyword.get(opts, :default, @default_locale)
+            default_locale
           )
           create_translation(record, translation_params, locale)
         translation ->
@@ -74,12 +84,8 @@ defmodule EctoI18n.Writer.Updater do
     )
   end
 
-  defp extract_translation_create_params(params, record, @default_locale) do
-    translation_params_with_defaults(params, record, record)
-  end
-
-  defp extract_translation_create_params(params, record, locale) do
-    case find_translation(record, locale) do
+  defp extract_translation_create_params(params, record, default_locale) do
+    case find_translation(record, default_locale) do
       nil ->
         translation_params_with_defaults(params, record, record)
       translation ->
