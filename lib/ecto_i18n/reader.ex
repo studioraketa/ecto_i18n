@@ -85,7 +85,7 @@ defmodule EctoI18n.Reader do
     Data.translation_schema(record)
   end
 
-  defp translate_record(_translations, record, @default_locale, _default_locale), do: record
+  defp translate_record(_translations, record, @default_locale, @default_locale), do: record
 
   defp translate_record(translations, record, locale, default_locale) do
     case find_translation(translations, locale, default_locale) do

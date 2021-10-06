@@ -66,14 +66,33 @@ defmodule EctoI18n.ReaderTest do
       assert translated_john.bio == john_t_es.bio
     end
 
-    test "returns record for given locale which is the default locale" do
+    test "defaults to config locale (record) if no options default locale is present" do
       john = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
-      create_user_translation(john, %{locale: "es", name: "John Doe ES", bio: "No me acuerdo..."})
 
-      translated_john = Reader.single(john, "en", default: "es")
+      translated_john = Reader.single(john, "es")
 
       assert translated_john.name == john.name
       assert translated_john.bio == john.bio
+    end
+
+    test "defaults to the given in the locale options when it is present" do
+      john = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      es_john = create_user_translation(john, %{locale: "es", name: "John Doe ES", bio: "No me acuerdo..."})
+
+      translated_john = Reader.single(john, "en", default: "es")
+
+      assert translated_john.name == es_john.name
+      assert translated_john.bio == es_john.bio
+    end
+
+    test "returns translation with locale matching the config when the default is overriden in the options" do
+      john = create_user(%{name: "Иван Иванов", email: "john@example.com", bio: "Не помня..."})
+      en_john = create_user_translation(john, %{locale: "en", name: "John Doe", bio: "I do not remember..."})
+
+      translated_john = Reader.single(john, "en", default: "bg")
+
+      assert translated_john.name == en_john.name
+      assert translated_john.bio == en_john.bio
     end
 
     test "when no translation for given locale exists and default locale not specified defaults to config locale and returns record" do
@@ -85,7 +104,7 @@ defmodule EctoI18n.ReaderTest do
       assert translated_john.bio == john.bio
     end
 
-    test "defaults to given locale when there is a translation for it" do
+    test "defaults to given in the options default locale when there is a translation for it" do
       john = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
       john_t_ru = create_user_translation(john, %{locale: "ru", name: "John Doe RU", bio: "спосиба"})
 
