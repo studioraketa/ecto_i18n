@@ -116,7 +116,9 @@ defmodule EctoI18n.WriterTest do
 
   describe "update/3" do
     test "updates record for default locale and valid params" do
-      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      user =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
       params = %{
         name: "Jack Bouer",
         email: "jack.b@bleble.com",
@@ -132,7 +134,9 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates record for overriden default locale and valid params" do
-      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      user =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
       params = %{
         name: "Jack Bouer",
         email: "jack.b@bleble.com",
@@ -149,7 +153,9 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns a changeset with errors for default locale and invalid params" do
-      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      user =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
       params = %{
         name: "",
         email: "",
@@ -162,7 +168,9 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns a changeset with errors for overriden default locale and invalid params" do
-      user = create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+      user =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
       params = %{
         name: "",
         email: "",
@@ -175,10 +183,15 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, valid params and existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
-      translation = create_user_translation(user, %{
-        locale: "es", name: "John Doe ES", bio: "No me acuerdo..."
-      })
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      translation =
+        create_user_translation(user, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
 
       params = %{
         name: "John Smith ES",
@@ -203,10 +216,15 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, valid partial params and existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
-      translation = create_user_translation(user, %{
-        locale: "es", name: "John Doe ES", bio: "No me acuerdo..."
-      })
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      translation =
+        create_user_translation(user, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
 
       params = %{
         email: "j.smith@example.com",
@@ -230,10 +248,15 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns changeset with errors for non default locale, invalid record params and existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
-      _translation = create_user_translation(user, %{
-        locale: "es", name: "John Doe ES", bio: "No me acuerdo..."
-      })
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      _translation =
+        create_user_translation(user, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
 
       params = %{
         name: "John Smith ES",
@@ -246,10 +269,15 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns changeset with errors for non default locale, invalid translation params and existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
-      _translation = create_user_translation(user, %{
-        locale: "es", name: "John Doe ES", bio: "No me acuerdo..."
-      })
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      _translation =
+        create_user_translation(user, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
 
       params = %{
         name: "John Smith ES",
@@ -261,7 +289,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, valid params and non existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         name: "John Smith ES",
@@ -285,7 +314,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for overriden non default locale, valid params and non existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         name: "John Smith ES",
@@ -293,7 +323,9 @@ defmodule EctoI18n.WriterTest do
         bio: "Some stuff in ES"
       }
 
-      assert {:ok, %User{} = updated_user} = Writer.update(user, params, @default_locale, default: "ru")
+      assert {:ok, %User{} = updated_user} =
+               Writer.update(user, params, @default_locale, default: "ru")
+
       assert updated_user.email == params.email
       assert updated_user.name == params.name
       assert updated_user.bio == params.bio
@@ -309,7 +341,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, partial params and non existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         email: "j.smith@example.com",
@@ -332,10 +365,15 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, partial params and existing different default" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
-      ru_translation = create_user_translation(user, %{
-        locale: "ru", name: "Комрад Иван Иванов", bio: "Я не знаю.."
-      })
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+
+      ru_translation =
+        create_user_translation(user, %{
+          locale: "ru",
+          name: "Комрад Иван Иванов",
+          bio: "Я не знаю.."
+        })
 
       params = %{
         email: "j.smith@example.com",
@@ -358,7 +396,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "updates a record and translation for non default locale, partial params and non existing different default" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         email: "j.smith@example.com",
@@ -381,7 +420,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns changeset with errors for non default locale, invalid record params and non existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         name: "John Smith ES",
@@ -394,7 +434,8 @@ defmodule EctoI18n.WriterTest do
     end
 
     test "returns changeset with errors for non default locale, invalid translation params and non existing translation" do
-      user = create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
+      user =
+        create_user(%{name: "John Smith", email: "john.smith@example.com", bio: "Some stuff"})
 
       params = %{
         name: "John Smith ES",

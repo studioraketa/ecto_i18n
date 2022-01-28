@@ -28,7 +28,9 @@ defmodule EctoI18n.Migration do
           timestamps()
         end
 
-        create(unique_index(@i18n.table_name, [unquote(:"#{@i18n.translated_record_name}_id"), :locale]))
+        create(
+          unique_index(@i18n.table_name, [unquote(:"#{@i18n.translated_record_name}_id"), :locale])
+        )
       end
     end
   end

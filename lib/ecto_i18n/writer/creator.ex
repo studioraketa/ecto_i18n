@@ -13,6 +13,7 @@ defmodule EctoI18n.Writer.Creator do
     case locale == default_locale do
       true ->
         create(struct, attrs)
+
       false ->
         create_with_translation(struct, attrs, locale)
     end

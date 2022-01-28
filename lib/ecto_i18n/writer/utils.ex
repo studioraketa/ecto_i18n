@@ -16,11 +16,12 @@ defmodule EctoI18n.Writer.Utils do
   def check_result({:error, changeset_or_value}), do: @repo.rollback(changeset_or_value)
 
   def check_translation_result({:ok, value}, _record), do: {:ok, value}
+
   def check_translation_result({:error, changeset}, record) do
     changeset.errors
     |> Enum.reduce(
       Changeset.change(record),
-      fn {key, {message, opts}}, cs->
+      fn {key, {message, opts}}, cs ->
         Changeset.add_error(cs, key, message, opts)
       end
     )

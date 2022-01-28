@@ -10,7 +10,7 @@ defmodule EctoI18n.Test.User do
     record: :user,
     fields: [
       %{name: :name, type: :string, default: "", required: true},
-      %{name: :bio, type: :string, default: "", required: true},
+      %{name: :bio, type: :string, default: "", required: true}
     ]
   )
 

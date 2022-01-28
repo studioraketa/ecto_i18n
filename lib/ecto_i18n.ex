@@ -1,5 +1,5 @@
 defmodule EctoI18n do
-  alias __MODULE__.{Reader, Writer}
+  alias __MODULE__.{Cleaner, Reader, Writer}
 
   import __MODULE__.Schema
 
@@ -20,7 +20,7 @@ defmodule EctoI18n do
           record_name: @i18n_record_name,
           schema: __MODULE__.Translation,
           translated_table_name: @i18n_translated_table_name,
-          translated_record_name: @i18n_translated_record_name,
+          translated_record_name: @i18n_translated_record_name
         }
       end
     end
@@ -31,4 +31,6 @@ defmodule EctoI18n do
 
   def create(struct, attrs, locale, opts \\ []), do: Writer.create(struct, attrs, locale, opts)
   def update(record, attrs, locale, opts \\ []), do: Writer.update(record, attrs, locale, opts)
+
+  def delete_translation(record, locale), do: Cleaner.delete_translation(record, locale)
 end

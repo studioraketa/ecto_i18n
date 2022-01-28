@@ -11,7 +11,9 @@ defmodule EctoI18n.Schema do
         }
 
         @field_names Enum.map(@i18n_opts.fields, fn x -> x.name end)
-        @required_field_names @i18n_opts.fields |> Enum.filter(fn x -> x.required end) |> Enum.map(fn x -> x.name end)
+        @required_field_names @i18n_opts.fields
+                              |> Enum.filter(fn x -> x.required end)
+                              |> Enum.map(fn x -> x.name end)
 
         use Ecto.Schema
         import Ecto.Changeset
@@ -27,7 +29,9 @@ defmodule EctoI18n.Schema do
             )
           end
 
-          belongs_to(@i18n_opts.translated_record_name, unquote(schema_module), on_replace: :nilify)
+          belongs_to(@i18n_opts.translated_record_name, unquote(schema_module),
+            on_replace: :nilify
+          )
 
           timestamps()
         end

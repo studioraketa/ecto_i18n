@@ -10,6 +10,7 @@ defmodule EctoI18n.Reader do
   end
 
   defp bulk_translate([], _locale, _opts), do: []
+
   defp bulk_translate(collection, locale, opts) do
     translated_table_fk_field = translated_table_fk_field(List.first(collection))
 
@@ -25,12 +26,21 @@ defmodule EctoI18n.Reader do
     Enum.map(
       collection,
       fn record ->
-        translate_record(Map.get(translations_map, record.id) || [], record, locale, default_locale)
+        translate_record(
+          Map.get(translations_map, record.id) || [],
+          record,
+          locale,
+          default_locale
+        )
       end
     )
   end
 
-  defp collection_translations(translation_schema, translated_table_fk_field, translated_records_ids) do
+  defp collection_translations(
+         translation_schema,
+         translated_table_fk_field,
+         translated_records_ids
+       ) do
     @repo.all(
       from(
         i18n in translation_schema,
@@ -45,16 +55,18 @@ defmodule EctoI18n.Reader do
       translations,
       %{},
       fn trans, acc ->
-        {_, updated_map} = Map.get_and_update(
-          acc,
-          Map.from_struct(trans)[translated_table_fk_field],
-          fn
-            nil ->
-              {nil, [trans]}
-            current_value ->
-              {current_value, [trans | current_value]}
-          end
-        )
+        {_, updated_map} =
+          Map.get_and_update(
+            acc,
+            Map.from_struct(trans)[translated_table_fk_field],
+            fn
+              nil ->
+                {nil, [trans]}
+
+              current_value ->
+                {current_value, [trans | current_value]}
+            end
+          )
 
         updated_map
       end
@@ -91,6 +103,7 @@ defmodule EctoI18n.Reader do
     case find_translation(translations, locale, default_locale) do
       nil ->
         record
+
       translation ->
         Data.merge_with_translation(record, translation)
     end
@@ -105,8 +118,10 @@ defmodule EctoI18n.Reader do
   end
 
   defp pick_translation(nil, _translations, @default_locale), do: nil
+
   defp pick_translation(nil, translations, default_locale) do
     Enum.find(translations, fn tr -> tr.locale == default_locale end)
   end
+
   defp pick_translation(translation, _, _), do: translation
 end

@@ -13,6 +13,7 @@ defmodule EctoI18n.Writer.Updater do
     case locale == default_locale do
       true ->
         update(record, attrs)
+
       false ->
         update_with_translation(record, attrs, locale, default_locale)
     end
@@ -35,17 +36,25 @@ defmodule EctoI18n.Writer.Updater do
         |> @repo.update()
         |> check_result()
 
-      {:ok, relevant_translation} = case translation do
-        nil ->
-          translation_params = attrs |> atomize_keys() |> extract_translation_create_params(
-            record,
-            default_locale
-          )
-          create_translation(record, translation_params, locale)
-        translation ->
-          translation_params = attrs |> atomize_keys() |> extract_translation_update_params(record)
-          update_translation(record, translation, translation_params)
-      end
+      {:ok, relevant_translation} =
+        case translation do
+          nil ->
+            translation_params =
+              attrs
+              |> atomize_keys()
+              |> extract_translation_create_params(
+                record,
+                default_locale
+              )
+
+            create_translation(record, translation_params, locale)
+
+          translation ->
+            translation_params =
+              attrs |> atomize_keys() |> extract_translation_update_params(record)
+
+            update_translation(record, translation, translation_params)
+        end
 
       Data.merge_with_translation(updated_record, relevant_translation)
     end)
@@ -76,10 +85,10 @@ defmodule EctoI18n.Writer.Updater do
         case Map.has_key?(params, field.name) do
           true ->
             Map.put(acc, field.name, Map.fetch!(params, field.name))
+
           _ ->
             acc
         end
-
       end
     )
   end
@@ -88,6 +97,7 @@ defmodule EctoI18n.Writer.Updater do
     case find_translation(record, default_locale) do
       nil ->
         translation_params_with_defaults(params, record, record)
+
       translation ->
         translation_params_with_defaults(params, record, translation)
     end
