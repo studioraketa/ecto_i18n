@@ -2,7 +2,7 @@ defmodule EctoI18n.ReaderTest do
   use EctoI18n.TestCase
 
   alias EctoI18n.Reader
-  alias EctoI18n.Test.{Repo, User}
+  alias EctoI18n.Test.{Post, Repo, User}
 
   defp create_user(params) do
     %User{}
@@ -13,6 +13,18 @@ defmodule EctoI18n.ReaderTest do
   defp create_user_translation(user, params) do
     %User.Translation{}
     |> User.Translation.changeset(Map.merge(params, %{user_id: user.id}))
+    |> Repo.insert!()
+  end
+
+  defp create_post(params) do
+    %Post{}
+    |> Post.changeset(params)
+    |> Repo.insert!()
+  end
+
+  defp create_post_translation(post, params) do
+    %Post.Translation{}
+    |> Post.Translation.changeset(Map.merge(params, %{post_id: post.id}))
     |> Repo.insert!()
   end
 
@@ -78,6 +90,35 @@ defmodule EctoI18n.ReaderTest do
 
       assert translated_jake.name == jake.name
       assert translated_jake.bio == jake.bio
+    end
+
+    test "returns translations of the records as well as the described associations" do
+      john =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
+      john_t_es =
+        create_user_translation(john, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
+
+      post = create_post(%{title: "Title", content: "Content", user_id: john.id})
+
+      post_t_es =
+        create_post_translation(post, %{locale: "es", title: "Title ES", content: "Content ES"})
+
+      john = Repo.preload(john, [:translations, :posts, posts: :translations])
+
+      [translated_john] = Reader.translate([john], "es", associations: [:posts])
+
+      assert translated_john.name == john_t_es.name
+      assert translated_john.bio == john_t_es.bio
+
+      [translated_post] = translated_john.posts
+
+      assert translated_post.title == post_t_es.title
+      assert translated_post.content == post_t_es.content
     end
   end
 
@@ -187,6 +228,35 @@ defmodule EctoI18n.ReaderTest do
 
       assert translated_john.name == john.name
       assert translated_john.bio == john.bio
+    end
+
+    test "returns translations of the record as well as the described associations" do
+      john =
+        create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
+      john_t_es =
+        create_user_translation(john, %{
+          locale: "es",
+          name: "John Doe ES",
+          bio: "No me acuerdo..."
+        })
+
+      post = create_post(%{title: "Title", content: "Content", user_id: john.id})
+
+      post_t_es =
+        create_post_translation(post, %{locale: "es", title: "Title ES", content: "Content ES"})
+
+      john = Repo.preload(john, [:translations, :posts, posts: :translations])
+
+      translated_john = Reader.translate(john, "es", associations: [:posts])
+
+      assert translated_john.name == john_t_es.name
+      assert translated_john.bio == john_t_es.bio
+
+      [translated_post] = translated_john.posts
+
+      assert translated_post.title == post_t_es.title
+      assert translated_post.content == post_t_es.content
     end
   end
 end

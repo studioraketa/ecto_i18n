@@ -3,18 +3,37 @@ defmodule EctoI18n.Reader.Common do
 
   alias EctoI18n.Data
 
-  def translated_table_fk_field(record) do
-    Data.translated_table_fk_field(record)
+  def translate_record(record, @default_locale, @default_locale, _associations),
+    do: record
+
+  def translate_record(record, locale, default_locale, associations) do
+    translated_record = translate(record, locale, default_locale)
+
+    Enum.reduce(associations, translated_record, fn association_key, tr_record ->
+      case Map.get(record, association_key) do
+        nil ->
+          tr_record
+
+        association_value ->
+          Map.put(
+            tr_record,
+            association_key,
+            translate_association(association_value, locale, default_locale)
+          )
+      end
+    end)
   end
 
-  def translation_schema(record) do
-    Data.translation_schema(record)
+  defp translate_association(associations, locale, default_locale) when is_list(associations) do
+    Enum.map(associations, fn x -> translate(x, locale, default_locale) end)
   end
 
-  def translate_record(_translations, record, @default_locale, @default_locale), do: record
+  defp translate_association(association, locale, default_locale) do
+    translate(association, locale, default_locale)
+  end
 
-  def translate_record(translations, record, locale, default_locale) do
-    case find_translation(translations, locale, default_locale) do
+  defp translate(record, locale, default_locale) do
+    case find_translation(record.translations, locale, default_locale) do
       nil ->
         record
 

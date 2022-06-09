@@ -5,10 +5,10 @@ defmodule EctoI18n.Reader.Single do
 
   def translate(record, locale, opts \\ []) do
     Common.translate_record(
-      record.translations,
       record,
       locale,
-      Keyword.get(opts, :default, @default_locale)
+      Keyword.get(opts, :default, @default_locale),
+      Keyword.get(opts, :associations, [])
     )
   end
 end

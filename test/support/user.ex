@@ -20,6 +20,7 @@ defmodule EctoI18n.Test.User do
     field(:bio, :string, default: "")
 
     has_many(:translations, __MODULE__.Translation)
+    has_many(:posts, EctoI18n.Test.Post)
   end
 
   def changeset(user, attributes) do

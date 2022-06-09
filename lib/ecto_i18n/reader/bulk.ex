@@ -10,18 +10,23 @@ defmodule EctoI18n.Reader.Bulk do
   defp bulk_translate([], _locale, _opts), do: []
 
   defp bulk_translate(collection, locale, opts) do
-    translate_collection(collection, locale, Keyword.get(opts, :default, @default_locale))
+    translate_collection(
+      collection,
+      locale,
+      Keyword.get(opts, :default, @default_locale),
+      Keyword.get(opts, :associations, [])
+    )
   end
 
-  defp translate_collection(collection, locale, default_locale) do
+  defp translate_collection(collection, locale, default_locale, associations) do
     Enum.map(
       collection,
       fn record ->
         Common.translate_record(
-          record.translations,
           record,
           locale,
-          default_locale
+          default_locale,
+          associations
         )
       end
     )
