@@ -26,8 +26,7 @@ defmodule EctoI18n do
     end
   end
 
-  def translate(term, locale, opts) when is_list(term), do: Reader.bulk(term, locale, opts)
-  def translate(term, locale, opts), do: Reader.single(term, locale, opts)
+  def translate(term, locale, opts), do: Reader.translate(term, locale, opts)
 
   def create(struct, attrs, locale, opts \\ []), do: Writer.create(struct, attrs, locale, opts)
   def update(record, attrs, locale, opts \\ []), do: Writer.update(record, attrs, locale, opts)

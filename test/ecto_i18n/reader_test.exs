@@ -16,7 +16,7 @@ defmodule EctoI18n.ReaderTest do
     |> Repo.insert!()
   end
 
-  describe "bulk/3" do
+  describe "translate/3 for collection" do
     test "returns translations for given locale and defaults to the original record if default locale is defacult config locale" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
@@ -31,7 +31,7 @@ defmodule EctoI18n.ReaderTest do
       jane =
         create_user(%{name: "Jane Doe", email: "jane@example.com", bio: "I do not remember..."})
 
-      [translated_john, translated_jane] = Reader.bulk([john, jane], "es")
+      [translated_john, translated_jane] = Reader.translate([john, jane], "es")
 
       assert translated_john.name == john_t_es.name
       assert translated_john.bio == john_t_es.bio
@@ -61,7 +61,7 @@ defmodule EctoI18n.ReaderTest do
         create_user(%{name: "Jake Doe", email: "jake@example.com", bio: "I do not remember..."})
 
       [translated_john, translated_jane, translated_jake] =
-        Reader.bulk([john, jane, jake], "es", default: "ru")
+        Reader.translate([john, jane, jake], "es", default: "ru")
 
       assert translated_john.name == john_t_es.name
       assert translated_john.bio == john_t_es.bio
@@ -74,7 +74,7 @@ defmodule EctoI18n.ReaderTest do
     end
   end
 
-  describe "single/3" do
+  describe "translate/3 for a single record" do
     test "returns translation for given locale" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
@@ -86,7 +86,7 @@ defmodule EctoI18n.ReaderTest do
           bio: "No me acuerdo..."
         })
 
-      translated_john = Reader.single(john, "es")
+      translated_john = Reader.translate(john, "es")
 
       assert translated_john.name == john_t_es.name
       assert translated_john.bio == john_t_es.bio
@@ -96,7 +96,7 @@ defmodule EctoI18n.ReaderTest do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
 
-      translated_john = Reader.single(john, "es")
+      translated_john = Reader.translate(john, "es")
 
       assert translated_john.name == john.name
       assert translated_john.bio == john.bio
@@ -113,7 +113,7 @@ defmodule EctoI18n.ReaderTest do
           bio: "No me acuerdo..."
         })
 
-      translated_john = Reader.single(john, "en", default: "es")
+      translated_john = Reader.translate(john, "en", default: "es")
 
       assert translated_john.name == es_john.name
       assert translated_john.bio == es_john.bio
@@ -129,7 +129,7 @@ defmodule EctoI18n.ReaderTest do
           bio: "I do not remember..."
         })
 
-      translated_john = Reader.single(john, "en", default: "bg")
+      translated_john = Reader.translate(john, "en", default: "bg")
 
       assert translated_john.name == en_john.name
       assert translated_john.bio == en_john.bio
@@ -139,7 +139,7 @@ defmodule EctoI18n.ReaderTest do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
 
-      translated_john = Reader.single(john, "es")
+      translated_john = Reader.translate(john, "es")
 
       assert translated_john.name == john.name
       assert translated_john.bio == john.bio
@@ -152,7 +152,7 @@ defmodule EctoI18n.ReaderTest do
       john_t_ru =
         create_user_translation(john, %{locale: "ru", name: "John Doe RU", bio: "спосиба"})
 
-      translated_john = Reader.single(john, "es", default: "ru")
+      translated_john = Reader.translate(john, "es", default: "ru")
 
       assert translated_john.name == john_t_ru.name
       assert translated_john.bio == john_t_ru.bio
@@ -162,7 +162,7 @@ defmodule EctoI18n.ReaderTest do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
 
-      translated_john = Reader.single(john, "es", default: "ru")
+      translated_john = Reader.translate(john, "es", default: "ru")
 
       assert translated_john.name == john.name
       assert translated_john.bio == john.bio
