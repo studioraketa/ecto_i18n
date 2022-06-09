@@ -18,6 +18,9 @@ defmodule EctoI18n.Test.User do
     field(:name, :string)
     field(:email, :string)
     field(:bio, :string, default: "")
+
+    has_many(:translations, __MODULE__.Translation)
+    has_many(:posts, EctoI18n.Test.Post)
   end
 
   def changeset(user, attributes) do
