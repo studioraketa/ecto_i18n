@@ -31,6 +31,9 @@ defmodule EctoI18n.ReaderTest do
       jane =
         create_user(%{name: "Jane Doe", email: "jane@example.com", bio: "I do not remember..."})
 
+      john = Repo.preload(john, :translations)
+      jane = Repo.preload(jane, :translations)
+
       [translated_john, translated_jane] = Reader.translate([john, jane], "es")
 
       assert translated_john.name == john_t_es.name
@@ -60,6 +63,10 @@ defmodule EctoI18n.ReaderTest do
       jake =
         create_user(%{name: "Jake Doe", email: "jake@example.com", bio: "I do not remember..."})
 
+      john = Repo.preload(john, :translations)
+      jane = Repo.preload(jane, :translations)
+      jake = Repo.preload(jake, :translations)
+
       [translated_john, translated_jane, translated_jake] =
         Reader.translate([john, jane, jake], "es", default: "ru")
 
@@ -86,6 +93,8 @@ defmodule EctoI18n.ReaderTest do
           bio: "No me acuerdo..."
         })
 
+      john = Repo.preload(john, :translations)
+
       translated_john = Reader.translate(john, "es")
 
       assert translated_john.name == john_t_es.name
@@ -95,6 +104,8 @@ defmodule EctoI18n.ReaderTest do
     test "defaults to config locale (record) if no options default locale is present" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
+      john = Repo.preload(john, :translations)
 
       translated_john = Reader.translate(john, "es")
 
@@ -113,6 +124,8 @@ defmodule EctoI18n.ReaderTest do
           bio: "No me acuerdo..."
         })
 
+      john = Repo.preload(john, :translations)
+
       translated_john = Reader.translate(john, "en", default: "es")
 
       assert translated_john.name == es_john.name
@@ -129,6 +142,8 @@ defmodule EctoI18n.ReaderTest do
           bio: "I do not remember..."
         })
 
+      john = Repo.preload(john, :translations)
+
       translated_john = Reader.translate(john, "en", default: "bg")
 
       assert translated_john.name == en_john.name
@@ -138,6 +153,8 @@ defmodule EctoI18n.ReaderTest do
     test "when no translation for given locale exists and default locale not specified defaults to config locale and returns record" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
+      john = Repo.preload(john, :translations)
 
       translated_john = Reader.translate(john, "es")
 
@@ -152,6 +169,8 @@ defmodule EctoI18n.ReaderTest do
       john_t_ru =
         create_user_translation(john, %{locale: "ru", name: "John Doe RU", bio: "спосиба"})
 
+      john = Repo.preload(john, :translations)
+
       translated_john = Reader.translate(john, "es", default: "ru")
 
       assert translated_john.name == john_t_ru.name
@@ -161,6 +180,8 @@ defmodule EctoI18n.ReaderTest do
     test "defaults to config locale and returns original record if no translation for given and given default locales exist" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
+
+      john = Repo.preload(john, :translations)
 
       translated_john = Reader.translate(john, "es", default: "ru")
 
