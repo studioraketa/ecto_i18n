@@ -29,7 +29,7 @@ defmodule EctoI18n.ReaderTest do
   end
 
   describe "translate/3 for collection" do
-    test "returns translations for given locale and defaults to the original record if default locale is defacult config locale" do
+    test "returns translations for given locale and defaults to the original record if default locale is default config locale" do
       john =
         create_user(%{name: "John Doe", email: "john@example.com", bio: "I do not remember..."})
 
